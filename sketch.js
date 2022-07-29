@@ -53,7 +53,7 @@ function popBlock(idx) {
   blocks[idx]  = 0;
 }
 
-function mousePressed() {
+function mouseClicked() {
   for (let i = 0; i < gridTotal; i++) {
     if (blocks[i] != 0) {
       let idx = blocks[i].clicked();
