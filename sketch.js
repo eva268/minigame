@@ -5,6 +5,7 @@ let gridTotal = gridCol * gridRow;
 
 function setup() {
   createCanvas(400, 400);
+  noLoop();
   for (let i = 0; i < gridTotal; i++) {
     blocks.push(new block(i));
   }
@@ -62,6 +63,7 @@ function mouseClicked() {
       }
     }
   }
+  redraw();
 }
 
 function checkGameClear(){
@@ -79,8 +81,10 @@ function checkGameClear(){
 
 function draw() {
   background(220);
-  for (let i = 0; i < gridTotal; i++) {
+  for (let i = gridTotal - 1; i >= 0; i--) {
     if (blocks[i] != 0) blocks[i].fall();
+  }
+  for (let i = 0; i < gridTotal; i++) {
     if (blocks[i] != 0) blocks[i].display(); 
   }
   checkGameClear();
