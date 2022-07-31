@@ -1,91 +1,72 @@
 let blocks = [];
-let gridCol = 10;
-let gridRow = 10;
-let gridTotal = gridCol * gridRow;
+let col = 10;
+let row = 10;
+let total = col * row;
 
 function setup() {
   createCanvas(400, 400);
   noLoop();
-  for (let i = 0; i < gridTotal; i++) {
-    blocks.push(new block(i));
-  }
-}
-
-function popBlock(idx) {
-  blocks[idx].poped = true;
-  
-  //left
-  if (idx % gridCol > 0) {
-    if (blocks[idx - 1].poped == false) {
-      if (blocks[idx].color == blocks[idx - 1].color){
-        popBlock(idx - 1);
-      }
+  for (let i = 0; i < col; i++) {
+    blocks.push([]);
+    for (let j = 0; j < row; j++) {
+      blocks[i].push(new block(i, j));
     }
-  }
-  
-  //right
-  if (idx % gridCol != gridCol - 1) {
-    if (blocks[idx + 1].poped == false) {
-      if (blocks[idx].color == blocks[idx + 1].color){
-        popBlock(idx + 1);
-      }
-    }
-  }
-  
-  //up
-  if (idx - gridCol >= 0) {
-    if (blocks[idx - gridCol].poped == false) {
-      if (blocks[idx].color == blocks[idx - gridCol].color){
-        popBlock(idx - gridCol);
-      }
-    }
-  }
-
-
-  //down
-  if (idx + gridCol < blocks.length) {
-    if (blocks[idx + gridCol].poped == false) {
-      if (blocks[idx].color == blocks[idx + gridCol].color){
-        popBlock(idx + gridCol);
-      }
-    }
-  }
-  
-  blocks[idx]  = 0;
-}
-
-function mouseClicked() {
-  for (let i = 0; i < gridTotal; i++) {
-    if (blocks[i] != 0) {
-      let idx = blocks[i].clicked();
-      if (idx != -1){
-        popBlock(idx);
-      }
-    }
-  }
-  redraw();
-}
-
-function checkGameClear(){
-  let cnt = 0;
-  for(let i = 0; i< gridTotal; i++){
-    if (blocks[i] == 0) cnt++;
-  }
-  if(cnt == gridTotal){
-    fill(0);
-    textAlign(CENTER);
-    textSize(80);
-    text("Clear!", width/2, height/2, );
   }
 }
 
 function draw() {
   background(220);
-  for (let i = gridTotal - 1; i >= 0; i--) {
-    if (blocks[i] != 0) blocks[i].fall();
-  }
-  for (let i = 0; i < gridTotal; i++) {
-    if (blocks[i] != 0) blocks[i].display(); 
-  }
+  for (let col of blocks) for (let blk of col) blk.display();
   checkGameClear();
 }
+
+function idxUpdate() {
+  for (let i = 0; i < blocks.length; i++) {
+    for (let j = 0; j < blocks[i].length; j++) {
+      blocks[i][j].col = i;
+      blocks[i][j].row = j;
+    }
+  }
+}
+function fall() {
+  for (let i = 0; i < blocks.length; i++) {
+    blocks[i] = blocks[i].filter( function (x){ return x != undefined});
+  }
+  idxUpdate();
+}
+
+function shiftLeft() {
+  for (let i = blocks.length - 1; i >= 0; i--) {
+    if (blocks[i].length == 0) blocks.splice(i, 1);
+  }
+  idxUpdate();
+  for (let col of blocks) for (let blk of col) blk.posUpdate();
+}
+
+function mouseClicked() {
+  let bWidth = width / col;
+  let bHeight = height / row;
+  let bCol = int(mouseX / bWidth);
+  let bRow = row - int(mouseY / bHeight) - 1;
+
+  blocks[bCol][bRow].clicked();
+  fall();
+  shiftLeft();
+  redraw();
+}
+
+function windowResized() {
+  // resizeCanvas(windowWidth, windowHeight);
+  // for (let i = 0; i < col; i++) for (let j = 0; j < row; j++) blocks[i][j].resize();
+  // redraw();
+}
+
+function checkGameClear() {
+  for(let i = 0; i < blocks.length; i++) if (blocks[i].length != 0) return;
+  fill(0);
+  textAlign(CENTER);
+  textSize(80);
+  text("Clear!", width / 2, height / 2,);
+  
+}
+
