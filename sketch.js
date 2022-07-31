@@ -4,7 +4,9 @@ let row = 10;
 let total = col * row;
 
 function setup() {
-  createCanvas(400, 400);
+  canvasSize = 8 * min(windowWidth, windowHeight) / 10;
+
+  createCanvas(canvasSize, canvasSize);
   noLoop();
   for (let i = 0; i < col; i++) {
     blocks.push([]);
