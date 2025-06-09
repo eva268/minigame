@@ -50,6 +50,8 @@ function mouseClicked() {
   let bHeight = height / row;
   let bCol = int(mouseX / bWidth);
   let bRow = row - int(mouseY / bHeight) - 1;
+  if (bCol < 0 || bCol >= blocks.length) return;
+  if (bRow < 0 || bRow >= blocks[bCol].length) return;
 
   blocks[bCol][bRow].clicked();
   fall();
