@@ -8,17 +8,23 @@ class block {
     this.width = width / col;
     this.height = height / row;
 
-    this.x = this.width * (this.col);
+    this.x = this.width * this.col;
     this.y = height - this.height * (this.row + 1);
+
+    this.targetX = this.x;
+    this.targetY = this.y;
+    this.isMoving = false;
 
     this.poped = false;
     this.color = blockColors[int(random(0, blockColors.length))];
   }
 
   posUpdate() {
-
-    this.x = this.width * (this.col);
-    this.y = height - this.height * (this.row + 1);
+    this.targetX = this.width * this.col;
+    this.targetY = height - this.height * (this.row + 1);
+    if (abs(this.targetX - this.x) > 0.1 || abs(this.targetY - this.y) > 0.1) {
+      this.isMoving = true;
+    }
   }
 
   resize() {
@@ -98,6 +104,18 @@ class block {
     }
 
     if (blk != undefined) return blk;
+  }
+
+  update() {
+    if (this.isMoving) {
+      this.x = lerp(this.x, this.targetX, 0.25);
+      this.y = lerp(this.y, this.targetY, 0.25);
+      if (abs(this.x - this.targetX) < 0.5 && abs(this.y - this.targetY) < 0.5) {
+        this.x = this.targetX;
+        this.y = this.targetY;
+        this.isMoving = false;
+      }
+    }
   }
 
   display() {
