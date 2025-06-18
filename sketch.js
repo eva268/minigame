@@ -7,7 +7,6 @@ function setup() {
   canvasSize = 8 * min(windowWidth, windowHeight) / 10;
 
   createCanvas(canvasSize, canvasSize);
-  noLoop();
   for (let i = 0; i < col; i++) {
     blocks.push([]);
     for (let j = 0; j < row; j++) {
@@ -18,7 +17,15 @@ function setup() {
 
 function draw() {
   background(220);
-  for (let col of blocks) for (let blk of col) blk.display();
+  let moving = false;
+  for (let column of blocks) {
+    for (let blk of column) {
+      blk.update();
+      if (blk.isMoving) moving = true;
+      blk.display();
+    }
+  }
+  if (!moving) noLoop();
   checkGameClear();
 }
 
@@ -35,6 +42,7 @@ function fall() {
     blocks[i] = blocks[i].filter( function (x){ return x != undefined});
   }
   idxUpdate();
+  for (let column of blocks) for (let blk of column) blk.posUpdate();
 }
 
 function shiftLeft() {
@@ -56,7 +64,7 @@ function mouseClicked() {
   blocks[bCol][bRow].clicked();
   fall();
   shiftLeft();
-  redraw();
+  loop();
 }
 
 function windowResized() {
